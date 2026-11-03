@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+	<meta charset="utf-8">
+	<title>voice message</title>
+	<style>
+		.audio{
+			width:400px;
+			height: 600px;
+			padding: 20px;
+			border:2px solid #757575;
+			margin:50px auto;
+		}
+		.audio audio{
+			outline: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="audio" id="audio">
+		<audio controls></audio>
+	</div>
+    <script type="text/javascript">
+    	var device = navigator.mediaDevices.getUserMedia({audio:true});
+    	var items =[];
+    	device.then(stream =>{
+    		var recorder = new MediaRecorder(stream);
+    		recorder.ondataavailable = e=>{
+    			items.push(e.data);
+    			if(recorder.state == 'inactive'){
+    				var blob = new Blob(items, {type: 'audio/webm'});
+    				var audio = document.getElementById('audio');
+    				var mainaudio = document.createElement('audio');
+    				mainaudio.setAttribute('controls', 'controls');
+    				audio.appendChild(mainaudio);
+    				mainaudio.innerHTML= '<audio src="'+URL.createObjectURL(blob)+'" type="audio/webm"/> controls';
+    			}
+    		}
+    		recorder.start(100);
+    		setTimeout(()=>{
+    			recorder.stop();
+    		},5000);
+    	})
+    </script>
+</body>
+</html>
